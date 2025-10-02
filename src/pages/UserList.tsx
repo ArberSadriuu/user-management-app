@@ -23,7 +23,7 @@ export default function UserList() {
   const localUserIds = useAppSelector((state) => state.users.localUsers.map((u) => u.id))
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [viewMode, setViewMode] = useState<ViewMode>("grid")
+  const [viewMode, setViewMode] = useState<ViewMode>("table")
   const [sortField, setSortField] = useState<SortField>("name")
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc")
   const [editingUser, setEditingUser] = useState<User | null>(null)
