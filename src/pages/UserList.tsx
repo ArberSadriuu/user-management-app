@@ -3,7 +3,7 @@
 import { useState, useMemo, Suspense } from "react"
 import { useUsers } from "../hooks/useUsers"
 import { useAppDispatch, useAppSelector, deleteUser } from "../store/store"
-import type { User } from "../../types"
+import type { User } from "../types"
 import UserCard from "../components/UserCard"
 import UserTable from "../components/UserTable"
 import AddUserDialog from "../components/AddUserDialog"

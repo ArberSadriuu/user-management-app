@@ -1,7 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import type { User } from "../../types"
+import type { User } from "../types"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import { Button } from "./ui/button"
 import { Trash2, Edit, Eye } from "lucide-react"

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchUsers } from "../api/users"
 import { useAppSelector } from "../store/store"
-import type { User } from "../../types"
+import type { User } from "../types"
 
 export const useUsers = () => {
   const localUsers = useAppSelector((state) => state.users.localUsers)

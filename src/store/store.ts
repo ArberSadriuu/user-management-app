@@ -1,6 +1,6 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import { useDispatch, useSelector } from "react-redux"
-import type { User, NewUser } from "../../types"
+import type { User, NewUser } from "../types"
 
 interface UsersState {
   localUsers: User[]

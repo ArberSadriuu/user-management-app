@@ -1,7 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import type { User } from "../../types"
+import type { User } from "../types"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Button } from "./ui/button"
 import { Mail, Building2, Trash2, Edit } from "lucide-react"
