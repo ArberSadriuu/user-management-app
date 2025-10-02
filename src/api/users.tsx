@@ -7,20 +7,23 @@ import {
     TableBody,
     TableCell,
 } from "../components/ui/table";
-
 import { Input } from "../components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 type User = {
-    name: string;
-    email: string;
-    company: { name: string };
+  id: number;
+  name: string;
+  email: string;
+  company: { name: string };
 };
+
 
 function UsersTable() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [search, setSearch] = useState("");
+    const navigate = useNavigate();
 
     const fetchUsers = async () => {
         try {
@@ -29,7 +32,6 @@ function UsersTable() {
 
             const response = await fetch("https://jsonplaceholder.typicode.com/users");
             if (!response.ok) throw new Error("Failed to fetch users");
-
             const data: User[] = await response.json();
             setUsers(data);
         } catch (err) {
@@ -44,11 +46,9 @@ function UsersTable() {
     }, []);
 
     const filteredUsers = users.filter((user) => user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase())
-        );
-    
+        user.email.toLowerCase().includes(search.toLowerCase()));
 
-    if (loading) return <p className="text-center text-gray-600">Loading users...</p>;
+    if (loading) return <p className="text-center text-gray-600">Loading users</p>;
     if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
     return (
@@ -70,7 +70,9 @@ function UsersTable() {
                 </TableHeader>
                 <TableBody>
                     {filteredUsers.map((user, index) => (
-                        <TableRow key={index}>
+                        <TableRow key={index}
+                            className="cursor-pointer hover:bg-gray-100"
+                            onClick={() => navigate(`/user/${user.id}`)}>
                             <TableCell>{user.name}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.company.name}</TableCell>
@@ -81,5 +83,4 @@ function UsersTable() {
         </div>
     );
 }
-
 export default UsersTable;
