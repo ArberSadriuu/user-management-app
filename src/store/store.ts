@@ -1,16 +1,31 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import { useDispatch, useSelector } from "react-redux"
-import type { User, NewUser } from "../../types/"
+import type { User, NewUser } from "../../types"
 
 interface UsersState {
   localUsers: User[]
   nextId: number
 }
 
-const initialState: UsersState = {
-  localUsers: [],
-  nextId: 1,
+const loadState = (): UsersState => {
+  try {
+    const serializedState = localStorage.getItem("usersState")
+    if (serializedState === null) {
+      return {
+        localUsers: [],
+        nextId: 1,
+      }
+    }
+    return JSON.parse(serializedState)
+  } catch (err) {
+    return {
+      localUsers: [],
+      nextId: 1,
+    }
+  }
 }
+
+const initialState: UsersState = loadState()
 
 const usersSlice = createSlice({
   name: "users",
@@ -58,6 +73,16 @@ export const store = configureStore({
   reducer: {
     users: usersSlice.reducer,
   },
+})
+
+store.subscribe(() => {
+  try {
+    const state = store.getState()
+    const serializedState = JSON.stringify(state.users)
+    localStorage.setItem("usersState", serializedState)
+  } catch (err) {
+    console.error("Failed to save state to localStorage:", err)
+  }
 })
 
 export type RootState = ReturnType<typeof store.getState>
