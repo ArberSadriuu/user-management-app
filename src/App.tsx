@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import UsersTable from "./api/users";
-import Details from "./api/details";
+import UsersTable from "./pages/users";
+import Details from "./pages/details";
 
 
 function App() {
