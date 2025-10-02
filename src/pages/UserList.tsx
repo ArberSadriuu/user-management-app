@@ -2,13 +2,12 @@
 
 import { useState, useMemo } from "react"
 import { useUsers } from "../hooks/useUsers"
-import { useAppDispatch, useAppSelector } from "../store/hooks"
-import { deleteUser } from "../store/usersSlice"
+import { useAppDispatch, useAppSelector, deleteUser } from "../store/store"
 import type { User } from "../../types"
-import UserCard from "../ui/userCard"
-import UserTable from "../ui/UserTable"
-import AddUserDialog from "../ui/AddUserDialog"
-import EditUserDialog from "../ui/EditUserDialog"
+import UserCard from "../components/UserCard"
+import UserTable from "../components/UserTable"
+import AddUserDialog from "../components/AddUserDialog"
+import EditUserDialog from "../components/EditUserDialog"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
@@ -21,7 +20,7 @@ type SortOrder = "asc" | "desc"
 export default function UserList() {
   const { users, isLoading, error } = useUsers()
   const dispatch = useAppDispatch()
-  const localUserIds = useAppSelector((state: any) => state.users.localUsers.map((u) => u.id))
+  const localUserIds = useAppSelector((state) => state.users.localUsers.map((u) => u.id))
 
   const [searchQuery, setSearchQuery] = useState("")
   const [viewMode, setViewMode] = useState<ViewMode>("grid")
