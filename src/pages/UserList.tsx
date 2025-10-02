@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, Suspense } from "react"
 import { useUsers } from "../hooks/useUsers"
 import { useAppDispatch, useAppSelector, deleteUser } from "../store/store"
 import type { User } from "../../types"
@@ -8,6 +8,7 @@ import UserCard from "../components/UserCard"
 import UserTable from "../components/UserTable"
 import AddUserDialog from "../components/AddUserDialog"
 import EditUserDialog from "../components/EditUserDialog"
+import { UserListSkeleton } from "../components/UserListSkeleton"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
@@ -17,7 +18,7 @@ type ViewMode = "grid" | "table"
 type SortField = "name" | "email" | "company"
 type SortOrder = "asc" | "desc"
 
-export default function UserList() {
+function UserListContent() {
   const { users, isLoading, error } = useUsers()
   const dispatch = useAppDispatch()
   const localUserIds = useAppSelector((state) => state.users.localUsers.map((u) => u.id))
@@ -59,11 +60,9 @@ export default function UserList() {
       })
     }
 
-    // Sort each group independently
     const sortedLocalUsers = sortUsers([...localUsers])
     const sortedApiUsers = sortUsers([...apiUsers])
 
-    // Return local users first (newest at top), then API users
     return [...sortedLocalUsers, ...sortedApiUsers]
   }, [users, searchQuery, sortField, sortOrder, localUserIds])
 
@@ -84,8 +83,46 @@ export default function UserList() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg text-muted-foreground">Loading users...</div>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input type="text" placeholder="Search by name or email..." disabled className="pl-10" />
+          </div>
+          <div className="flex gap-2">
+            <AddUserDialog />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex gap-2 items-center">
+            <span className="text-sm text-muted-foreground">Sort by:</span>
+            <Select disabled>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Name" />
+              </SelectTrigger>
+            </Select>
+            <Button variant="outline" size="sm" disabled>
+              <ArrowUpDown className="h-4 w-4 mr-2" />
+              A-Z
+            </Button>
+          </div>
+
+          <div className="flex gap-2">
+            <Button variant={viewMode === "grid" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grid")}>
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === "table" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <UserListSkeleton viewMode={viewMode} />
       </div>
     )
   }
@@ -172,5 +209,13 @@ export default function UserList() {
 
       <EditUserDialog user={editingUser} open={editDialogOpen} onOpenChange={setEditDialogOpen} />
     </div>
+  )
+}
+
+export default function UserList() {
+  return (
+    <Suspense fallback={<UserListSkeleton viewMode="table" />}>
+      <UserListContent />
+    </Suspense>
   )
 }
