@@ -35,27 +35,37 @@ export default function UserList() {
       return user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)
     })
 
-    filtered.sort((a, b) => {
-      let aValue: string
-      let bValue: string
+    const localUsers = filtered.filter((user) => localUserIds.includes(user.id))
+    const apiUsers = filtered.filter((user) => !localUserIds.includes(user.id))
 
-      if (sortField === "company") {
-        aValue = a.company.name.toLowerCase()
-        bValue = b.company.name.toLowerCase()
-      } else {
-        aValue = a[sortField].toLowerCase()
-        bValue = b[sortField].toLowerCase()
-      }
+    const sortUsers = (usersToSort: User[]) => {
+      return usersToSort.sort((a, b) => {
+        let aValue: string
+        let bValue: string
 
-      if (sortOrder === "asc") {
-        return aValue.localeCompare(bValue)
-      } else {
-        return bValue.localeCompare(aValue)
-      }
-    })
+        if (sortField === "company") {
+          aValue = a.company.name.toLowerCase()
+          bValue = b.company.name.toLowerCase()
+        } else {
+          aValue = a[sortField].toLowerCase()
+          bValue = b[sortField].toLowerCase()
+        }
 
-    return filtered
-  }, [users, searchQuery, sortField, sortOrder])
+        if (sortOrder === "asc") {
+          return aValue.localeCompare(bValue)
+        } else {
+          return bValue.localeCompare(aValue)
+        }
+      })
+    }
+
+    // Sort each group independently
+    const sortedLocalUsers = sortUsers([...localUsers])
+    const sortedApiUsers = sortUsers([...apiUsers])
+
+    // Return local users first (newest at top), then API users
+    return [...sortedLocalUsers, ...sortedApiUsers]
+  }, [users, searchQuery, sortField, sortOrder, localUserIds])
 
   const handleDelete = (id: number) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
